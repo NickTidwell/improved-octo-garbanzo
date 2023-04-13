@@ -4,21 +4,13 @@ import matplotlib.pyplot as plt
 
 
 def filter_df(df, metric, func):
-    # print(df.loc[(df['metric'] == metric) ])
     return df.loc[(df['metric'] == metric) ][func].to_list()
 
 def plot_bars():
     results_pd = pd.read_csv("./output/res_colab.csv").sort_values(by=['metric'])
-    print(results_pd)
-    rmse = results_pd['RMSE']
-    mae = results_pd['MAE']
-    label = results_pd[['metric', 'type']].apply(lambda row: ' - '.join(row.values.astype(str)), axis=1)
-    # fig = plt.figure(figsize = (10, 5))
-
 
     X = ['User', 'Item']
     X_axis = np.arange(len(X))
-
     fig, ax = plt.subplots(2)
 
     ax[0].set_xticks(X_axis, X)
@@ -52,13 +44,11 @@ def plot_k():
     ax[0].plot(k, rmse_i, label="RMSE")
     ax[0].set_ylabel("Error")
     ax[0].plot(k, mae_i, label="MAE")
-    # ax[0].set_ylabel("MAE")
+
     ax[1].set_title("User Colab filtering")
     ax[1].plot(k, rmse_u, label="RMSE")
     ax[1].set_ylabel("Error")
     ax[1].plot(k, mae_u, label="MAE")
-    # ax[1].set_ylabel("MAE")
-
 
     plt.xlabel("K")
     plt.legend()
@@ -68,4 +58,6 @@ def plot_k():
     print("ITEM MAE MIN: ", np.argmin(mae_i))
     print("USER RMSE MIN: ", np.argmin(rmse_u))
     print("USER MAE MIN: ", np.argmin(mae_u))
+    
 plot_k()
+plot_bars()

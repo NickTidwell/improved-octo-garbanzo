@@ -8,10 +8,7 @@ from surprise import KNNWithMeans
 ratings_pd = pd.read_csv("data/ratings_small.csv")
 reader = Reader(rating_scale=(1, 5))
 
-# Load the movielens-100k dataset (download it if needed),
-# data = Dataset.load_builtin("ml-100k")
 data = Dataset.load_from_df(ratings_pd[['userId', 'movieId', 'rating']], reader)
-# We'll use the famous SVD algorithm.
 
 
 def find_best_k():

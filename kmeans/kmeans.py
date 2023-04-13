@@ -4,6 +4,11 @@ from numpy.linalg import norm
 import matplotlib.pyplot as plt
 import sys
 
+X = pd.read_csv("./kmeans_data/data.csv", header=None).to_numpy()
+k = 10
+
+
+
 # function to compute euclidean distance
 def euclidean_distance(a, b):
     return np.sum((a - b)**2)
@@ -45,24 +50,24 @@ def Kmean(X, k, op="cosine"):
         for K in range(k):
             clusterwise_sse[K] += np.square(X[C == K] - centroids[K]).sum()
         sse = sum(clusterwise_sse)
-        if sse > prev_sse:
-            break
+        if sse >= prev_sse:
+            break #SSE not shrunk
         prev_sse = sse
     return np.array(centroids), C, counter,clusterwise_sse
-# X = np.random.rand(100,2)
-X = pd.read_csv("./kmeans_data/data.csv", header=None).to_numpy()
-k = 10
-centroids,C,counter,sse = Kmean(X, k, "jaccard")
-print(sse)
-print(sum(sse))
-print(f"Euclidean Converged in {counter} iterations\n")
 
 
-with open('out.csv', 'w') as f:
-    for val in C:
-        f.write(str(val) + "\n")
+def run_kmeans_all():
+    metrics = ['jaccard', 'cosine', 'euclidean']
+    for metric in metrics:
+        centroids,C,counter,sse = Kmean(X, k, metric)
+        print(f"{metric} Converged in {counter} iterations with sse {sum(sse)}\n")
 
-if False : 
+        with open(f"{metric}.csv", 'w') as f:
+            for val in C:
+                f.write(str(val) + "\n")
+
+
+def run_five_fold():
     euclid_cnt_total = 0
     cos_cnt_total = 0
     jac_cnt_total = 0
@@ -95,8 +100,3 @@ if False :
 
     print(f"jaccard avg convg: {float(jac_cnt_total) / float(STEPS)}")
     print(f"jaccard avg sse: {float(jac_sse_total) / float(STEPS)}")
-
-def print_kmean():
-    plt.scatter(X[:,0], X[:,1], c=C)
-    plt.scatter(centroids[:,0], centroids[:,1], marker='*', s=200, c='#050505')
-    plt.show()
